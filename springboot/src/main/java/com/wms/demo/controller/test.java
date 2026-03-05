@@ -39,10 +39,14 @@ public class test {
         page.setCurrent(query.getPageNum());
         page.setSize(query.getPageSize());
         String name = (String)query.getData().get("name");
+        String sex = (String)query.getData().get("sex");
 
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper();
         if(name != null && !name.isEmpty()){
             lambdaQueryWrapper.like(User::getName, name);
+        }
+        if(sex != null  && !sex.isEmpty()){
+            lambdaQueryWrapper.like(User::getSex, Integer.valueOf(sex));
         }
 
         IPage result = userService.page(page, lambdaQueryWrapper);

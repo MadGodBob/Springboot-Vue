@@ -7,7 +7,7 @@
         <Header @doCollapse="doCollapse"></Header>
       </el-header>
 
-      <el-main>
+      <el-main style="margin: 10px">
         <Main></Main>
       </el-main>
     </el-container>

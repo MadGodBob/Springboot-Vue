@@ -5,6 +5,8 @@ git push -u origin main
 
 下载nodejs	http://nodejs.cn/download/
 
+css样式	https://www.cainiaojc.com/css-reference/css-reference.html
+
 ## 安装Vue脚手架及其它依赖
 
 ```
