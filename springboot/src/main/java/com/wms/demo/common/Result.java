@@ -29,6 +29,9 @@ public class Result {
     public static Result error(Object data){
         return setResult(ERROR_CODE, "error", 0L, data);
     }
+    public static Result error(){
+        return setResult(ERROR_CODE, "error", 0L, null);
+    }
 
     // 设置方法
     public static Result setResult(Integer code, String msg, Long total, Object data){

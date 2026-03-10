@@ -13,7 +13,35 @@
       </el-select>
       <el-button type="primary" style="margin-left: 10px" @click="loadPost">查询</el-button>
       <el-button type="danger" @click="resetInput">重置</el-button>
+      <el-button type="success" @click="addNew_FormVisible = true">新增</el-button>
     </div>
+
+    <!--表单-->
+    <el-dialog v-model="addNew_FormVisible" title="新增账号" width="500">
+      <el-form :model="form">
+        <el-form-item label="账号" :label-width="formLabelWidth">
+          <el-input v-model="form.no" :style="{width: formValueWidth}" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="姓名" :label-width="formLabelWidth">
+          <el-input v-model="form.name" :style="{width: formValueWidth}" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="性别" :label-width="formLabelWidth">
+          <el-select v-model="form.sex" :style="{width: formValueWidth}" placeholder="请选择性别">
+            <el-option label="男" value="1" />
+            <el-option label="女" value="2" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="手机号" :label-width="formLabelWidth">
+          <el-input v-model="form.phone" :style="{width: formValueWidth}" autocomplete="off" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="addNew_FormVisible = false">取消</el-button>
+          <el-button type="primary" @click="addNew" :loading="loadFlag">提交</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
     <el-table :data="tableData" border>
         <el-table-column prop="id" label="ID" width="60" />
@@ -57,6 +85,7 @@ export default {
       total: 0,
       name: "",
       sex: '',
+      loadFlag: false,
       sex_option: [
         {
           value: '1',
@@ -67,6 +96,15 @@ export default {
           label: '女',
         }
       ],
+      form: {
+        no: '',
+        name: '',
+        sex: '',
+        phone: '',
+      },
+      addNew_FormVisible: false,
+      formLabelWidth: '140px',  // 表单内容宽度
+      formValueWidth: '250px',  // 表单输入宽度
     }
   },
   methods:{
@@ -84,6 +122,29 @@ export default {
       this.sex = ""
       this.loadPost()
     },
+    formValidCheck(){
+      if(this.form.no == '') return false
+      if(this.form.name == '') return false
+      if(this.form.sex == '') return false
+      if(this.form.phone == '') return false
+      return true
+    },
+    async addNew(){ // 表单新增数据回调
+      if(!this.formValidCheck()){
+        ElMessage('信息不完整!')
+        return
+      }
+      this.loadFlag = true
+      const ret = await this.save()
+      if(ret.code == 200){
+        this.addNew_FormVisible = false
+        this.loadFlag = false
+        this.loadPost()
+      }
+    },
+    save(){ // User新增数据
+      return resquest.post('/save', this.form)
+    },
     loadPost(){
       resquest.post('/listPage', {
         pageNum: this.pageNum,
@@ -93,7 +154,7 @@ export default {
           sex: this.sex
         }
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         if(res.code == 200){
           this.tableData = res.data
           this.total = res.total

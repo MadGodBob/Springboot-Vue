@@ -56,8 +56,9 @@ public class test {
 
     // 新增
     @PostMapping("/save")
-    public boolean save(@RequestBody User user){
-        return userService.save(user);
+    public Result save(@RequestBody User user){
+        user.setPassword("password");
+        return userService.save(user) ? Result.success() : Result.error();
     }
 
     // 修改

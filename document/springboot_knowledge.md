@@ -34,6 +34,7 @@ spring:
 ```
 @Data
 public class User {
+	@TableId(type = IdType.AUTO)  // 使用数据库自增策略
     private Integer id;
     private String no;
     private String name;
