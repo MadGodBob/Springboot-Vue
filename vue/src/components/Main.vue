@@ -18,20 +18,20 @@
 
     <!--表单-->
     <el-dialog v-model="addNew_FormVisible" title="新增账号" width="500">
-      <el-form :model="form">
-        <el-form-item label="账号" :label-width="formLabelWidth">
+      <el-form :model="form" ref="formRef" :rules="formRules">
+        <el-form-item prop="no" label="账号" :label-width="formLabelWidth">
           <el-input v-model="form.no" :style="{width: formValueWidth}" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="姓名" :label-width="formLabelWidth">
+        <el-form-item prop="name" label="姓名" :label-width="formLabelWidth">
           <el-input v-model="form.name" :style="{width: formValueWidth}" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="性别" :label-width="formLabelWidth">
+        <el-form-item prop="sex" label="性别" :label-width="formLabelWidth">
           <el-select v-model="form.sex" :style="{width: formValueWidth}" placeholder="请选择性别">
             <el-option label="男" value="1" />
             <el-option label="女" value="2" />
           </el-select>
         </el-form-item>
-        <el-form-item label="手机号" :label-width="formLabelWidth">
+        <el-form-item prop="phone" label="手机号" :label-width="formLabelWidth">
           <el-input v-model="form.phone" :style="{width: formValueWidth}" autocomplete="off" />
         </el-form-item>
       </el-form>
@@ -43,7 +43,7 @@
       </template>
     </el-dialog>
 
-    <el-table :data="tableData" border>
+    <el-table :data="tableData" v-loading="tableLoadingFlag" border>
         <el-table-column prop="id" label="ID" width="60" />
         <el-table-column prop="no" label="账号" width="100" />
         <el-table-column prop="name" label="姓名" width="100" />
@@ -52,10 +52,16 @@
               {{ slot.row.sex === 1 ? '男' : '女' }}
           </template>
         </el-table-column>
-        <el-table-column prop="phone" label="手机号" width="100" />
+        <el-table-column prop="phone" label="手机号" width="140" />
         <el-table-column prop="operate" label="操作">
+          <template v-slot="slot">
             <el-button size="small" type="success">编辑</el-button>
-            <el-button size="small" type="danger">删除</el-button>
+            <el-popconfirm title="确定删除吗" placement="bottom" @confirm="deleteById(slot.row.id)">
+              <template #reference>
+                <el-button size="small" type="danger">删除</el-button>
+              </template>
+            </el-popconfirm>
+          </template>
         </el-table-column>>
     </el-table>
     <el-pagination
@@ -74,6 +80,7 @@
 <script>
 import resquest from "@/utils/resquest";
 import {ElMessage} from "element-plus";
+import {ref} from "vue";
 
 export default {
   name: "Main",
@@ -86,6 +93,7 @@ export default {
       name: "",
       sex: '',
       loadFlag: false,
+      tableLoadingFlag: false,
       sex_option: [
         {
           value: '1',
@@ -96,6 +104,13 @@ export default {
           label: '女',
         }
       ],
+      formRules: {
+        no: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+        name: { required: true, message: '请输入姓名', trigger: 'blur' },
+        sex: { required: true, message: '请选择性别', trigger: 'blur' },
+        phone: [{ required: true, message: '请输入手机号', trigger: 'blur' }, { validator: this.checkFormPhone, trigger: 'blur' }],
+      },
+      formRef: ref(),
       form: {
         no: '',
         name: '',
@@ -117,21 +132,22 @@ export default {
       this.pageNum = val
       this.loadPost()
     },
+    checkFormPhone: (rule, value, callback) => {
+      if (!value) return callback(new Error('请输入手机号'))
+      const s = String(value)
+      if (!/^1\d{10}$/.test(s)) return callback(new Error('手机号格式不正确'))
+      callback()
+    },
     resetInput(){
       this.name = ""
       this.sex = ""
       this.loadPost()
     },
-    formValidCheck(){
-      if(this.form.no == '') return false
-      if(this.form.name == '') return false
-      if(this.form.sex == '') return false
-      if(this.form.phone == '') return false
-      return true
-    },
     async addNew(){ // 表单新增数据回调
-      if(!this.formValidCheck()){
-        ElMessage('信息不完整!')
+      const formEl = this.$refs.formRef
+      if (!formEl) return
+      const valid = await formEl.validate().catch(() => false)
+      if(!valid){
         return
       }
       this.loadFlag = true
@@ -141,11 +157,20 @@ export default {
         this.loadFlag = false
         this.loadPost()
       }
+      else{
+        ElMessage.error(ret.msg)
+        this.loadFlag = false
+      }
+    },
+    async deleteById(id){
+      await resquest.get(`/delete?id=${id}`)
+      this.loadPost()
     },
     save(){ // User新增数据
       return resquest.post('/save', this.form)
     },
     loadPost(){
+      this.tableLoadingFlag = true
       resquest.post('/listPage', {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
@@ -154,10 +179,10 @@ export default {
           sex: this.sex
         }
       }).then(res => {
-        // console.log(res)
         if(res.code == 200){
           this.tableData = res.data
           this.total = res.total
+          this.tableLoadingFlag = false
         }
         else {
           ElMessage(res.message)

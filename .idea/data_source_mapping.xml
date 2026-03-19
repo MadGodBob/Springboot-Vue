@@ -2,5 +2,8 @@
 <project version="4">
   <component name="DataSourcePerFileMappings">
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/311aed18-fa19-4e12-abab-cc0a982da97c/console.sql" value="311aed18-fa19-4e12-abab-cc0a982da97c" />
+    <file url="file://$PROJECT_DIR$/springboot/src/sql/delete_user.sql" value="311aed18-fa19-4e12-abab-cc0a982da97c" />
+    <file url="file://$PROJECT_DIR$/springboot/src/sql/showCreateTable_user.sql" value="311aed18-fa19-4e12-abab-cc0a982da97c" />
+    <file url="file://$PROJECT_DIR$/springboot/src/sql/user.sql" value="311aed18-fa19-4e12-abab-cc0a982da97c" />
   </component>
 </project>

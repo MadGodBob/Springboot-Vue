@@ -26,8 +26,8 @@ public class Result {
     }
 
     // 失败
-    public static Result error(Object data){
-        return setResult(ERROR_CODE, "error", 0L, data);
+    public static Result error(String msg){
+        return setResult(ERROR_CODE, msg, 0L, null);
     }
     public static Result error(){
         return setResult(ERROR_CODE, "error", 0L, null);

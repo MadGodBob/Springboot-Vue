@@ -58,7 +58,15 @@ public class test {
     @PostMapping("/save")
     public Result save(@RequestBody User user){
         user.setPassword("password");
-        return userService.save(user) ? Result.success() : Result.error();
+        try {
+            return userService.save(user) ? Result.success() : Result.error("保存失败");
+        } catch (org.springframework.dao.DuplicateKeyException e) {
+            return Result.error("账号已存在");
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return Result.error("数据不合法/违反约束");
+        } catch (Exception e) {
+            return Result.error("系统异常");
+        }
     }
 
     // 修改
@@ -69,7 +77,7 @@ public class test {
 
     // 删除
     @GetMapping("/delete")
-    public boolean delete(Integer id){
+    public boolean delete(@RequestParam Integer id){
         return userService.removeById(id);
     }
 }

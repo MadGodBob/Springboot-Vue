@@ -1,0 +1,2 @@
+USE madgod;
+DROP TABLE IF EXISTS user
