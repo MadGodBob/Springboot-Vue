@@ -1,16 +1,15 @@
 <template>
-  <div class="toolbar" style="display: flex;line-height: 60px">
-    <div style="margin-top: 10px;">
-      <el-icon style="font-size: 20px;cursor: pointer" @click="collapse"><Expand /></el-icon>
+  <div class="toolbar" style="display: flex; line-height: 60px">
+    <div style="margin-top: 10px">
+      <el-icon style="font-size: 20px; cursor: pointer" @click="collapse"><Expand /></el-icon>
     </div>
-    <div style="flex: 1;text-align: center;font-size: 20px">
+    <div style="flex: 1; text-align: center; font-size: 20px">
       <span>欢迎来到仓库管理系统</span>
     </div>
 
-    <!--下拉框-->
     <el-dropdown @command="handleCommand">
-      <span>
-        <span class="username">牢大</span>
+      <span class="toolbar-user">
+        <span class="username">{{ username }}</span>
         <el-icon class="el-icon--right">
           <ArrowDownBold />
         </el-icon>
@@ -26,27 +25,55 @@
 </template>
 
 <script>
-import {ArrowDownBold} from "@element-plus/icons-vue";
-import { ElMessage } from 'element-plus'
+import { ArrowDownBold } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
 
 export default {
   name: "Header",
-  components: {ArrowDownBold},
-  methods:{
-    collapse(){
-      this.$emit("doCollapse")
+  components: { ArrowDownBold },
+  computed: {
+    username() {
+      const loginInfo = JSON.parse(localStorage.getItem("userToken") || "{}");
+      return loginInfo.user?.name || loginInfo.user?.no || "用户";
     },
-    handleCommand(command){
-      ElMessage(`${command}`)
-}
-  }
-}
+  },
+  methods: {
+    collapse() {
+      this.$emit("doCollapse");
+    },
+    handleCommand(command) {
+      if (command === "loginOut") {
+        localStorage.removeItem("userToken");
+        this.$router.push("/login");
+        ElMessage.success("已退出登录");
+        return;
+      }
+
+      ElMessage.info("个人中心暂未实现");
+    },
+  },
+};
 </script>
 
 <script setup>
-import {Expand} from "@element-plus/icons-vue";
+import { Expand } from "@element-plus/icons-vue";
 </script>
 
 <style scoped>
+.toolbar {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: 60px;
+}
 
+.toolbar-user {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.username {
+  margin-right: 6px;
+}
 </style>
