@@ -31,9 +31,18 @@
           </el-card>
         </div>
 
-        <div v-else-if="activeMenu === 'user'">
+        <div v-else-if="activeMenu === 'user'" class="user-page">
           <div class="page-title">用户</div>
-          <Main />
+          <el-card shadow="hover" class="user-card">
+            <Main />
+          </el-card>
+        </div>
+
+        <div v-else-if="activeMenu === 'storage'" class="storage-page">
+          <div class="page-title">物品</div>
+          <el-card shadow="hover" class="storage-card">
+            <Storage />
+          </el-card>
         </div>
 
         <el-card v-else shadow="hover" class="placeholder-card">
@@ -49,6 +58,7 @@
 import Aside from "./Aside.vue";
 import Header from "./Header.vue";
 import Main from "./Main.vue";
+import Storage from "./Storage.vue";
 
 export default {
   name: "Index",
@@ -56,6 +66,7 @@ export default {
     Aside,
     Header,
     Main,
+    Storage,
   },
   data() {
     return {
@@ -80,7 +91,6 @@ export default {
     },
     currentMenuTitle() {
       const titleMap = {
-        goods: "商品",
         setting: "设置",
       };
       return titleMap[this.activeMenu] || "页面";
@@ -111,8 +121,15 @@ export default {
 }
 
 .home-page,
+.user-page,
+.storage-page,
 .placeholder-card {
   max-width: 1000px;
+}
+
+.user-card,
+.storage-card {
+  border-radius: 8px;
 }
 
 .placeholder-card {

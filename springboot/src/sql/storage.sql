@@ -1,0 +1,8 @@
+USE madgod;
+CREATE TABLE `storage` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `item_id` VARCHAR(64) UNIQUE NOT NULL COMMENT '物品编号（唯一）',
+    `item_name` VARCHAR(128) NOT NULL COMMENT '物品名称',
+    `remark` VARCHAR(255) DEFAULT NULL COMMENT '备注',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='库存物品表';

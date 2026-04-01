@@ -22,10 +22,10 @@
           </template>
         </el-menu-item>
 
-        <el-menu-item index="goods">
+        <el-menu-item index="storage">
           <el-icon><Box /></el-icon>
           <template #title>
-            <span>商品</span>
+            <span>物品</span>
           </template>
         </el-menu-item>
 
